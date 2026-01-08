@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMPUTER AND INFORMATICS TKNP - Student Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .resource-card {
+            transition: all 0.3s ease;
+        }
+        
+        .login-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .dark-mode {
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .software-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                        <i class="fas fa-laptop-code text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">COMPUTER AND INFORMATICS TKNP</h1>
+                        <p class="text-xs text-gray-500">Student Portal v1.0</p>
+                    </div>
+                </div>
+
+                
+                <!-- Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#dashboard" class="text-gray-700 hover:text-blue-600 font-medium">Dashboard</a>
+                    <a href="#resources" class="text-gray-700 hover:text-blue-600 font-medium">Resources</a>
+                    <a href="#software" class="text-gray-700 hover:text-blue-600 font-medium">Software</a>
+                    <a href="#school" class="text-gray-700 hover:text-blue-600 font-medium">School Links</a>
+                    <a href="#help" class="text-gray-700 hover:text-blue-600 font-medium">Help</a>
+                </div>
+                
+                <!-- Right Side -->
+                <div class="flex items-center space-x-4">
+                    <button id="darkModeToggle" class="p-2 rounded-full hover:bg-gray-100">
+                        <i class="fas fa-moon text-gray-700"></i>
+                    </button>
+                    <button id="loginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Student Login
+                    </button>
+                    <button class="md:hidden p-2" id="mobileMenuBtn">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden bg-white border-t px-4 py-3 hidden">
+            <div class="flex flex-col space-y-3">
+                <a href="#dashboard" class="py-2 hover:text-blue-600">Dashboard</a>
+                <a href="#resources" class="py-2 hover:text-blue-600">Resources</a>
+                <a href="#software" class="py-2 hover:text-blue-600">Software</a>
+                <a href="#school" class="py-2 hover:text-blue-600">School Links</a>
+                <a href="#help" class="py-2 hover:text-blue-600">Help</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="modal-content bg-white rounded-xl max-w-md mx-auto mt-20 p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Student Login</h2>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2">Student ID / Email</label>
+                    <input type="text" id="studentId" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="ICT/2024/001 or student@school.ac.tz">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2">Password</label>
+                    <input type="password" id="password" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="••••••••">
+                </div>
+                
+                <div class="flex items-center justify-between mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded text-blue-600">
+                        <span class="ml-2 text-gray-700">Remember me</span>
+                    </label>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">Forgot password?</a>
+                </div>
+                
+                <button type="submit" 
+                        class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 mb-4">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-gray-600">Demo login: Use <strong>demo@ictnexus.com</strong> / <strong>demo123</strong></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-16 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">All Your ICT Resources in One Place</h1>
+            <p class="text-xl opacity-90 mb-8 max-w-3xl mx-auto">
+                Access revision materials, software downloads, school portals, and collaboration tools designed specifically for ICT students.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#resources" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100">
+                    <i class="fas fa-book-open mr-2"></i>Explore Resources
+                </a>
+                <button id="quickLoginBtn" class="bg-transparent border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10">
+                    <i class="fas fa-bolt mr-2"></i>Quick Access
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-12 px-4 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-10">Student Dashboard</h2>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-book text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Resources Available</p>
+                            <p class="text-3xl font-bold">156</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-download text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Software Tools</p>
+                            <p class="text-3xl font-bold">42</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-users text-purple-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Active Students</p>
+                            <p class="text-3xl font-bold">1,245</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500">Today's Classes</p>
+                            <p class="text-3xl font-bold">3</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-link mr-2 text-blue-600"></i> Quick School Links
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="https://mail.google.com" target="_blank" class="p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 text-center">
+                        <i class="fas fa-envelope text-red-500 text-2xl mb-2"></i>
+                        <p class="font-medium">School Email</p>
+                    </a>
+                    
+                    <a href="#" class="p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 text-center">
+                        <i class="fas fa-calendar-alt text-green-500 text-2xl mb-2"></i>
+                        <p class="font-medium">Timetable</p>
+                    </a>
+                    
+                    <a href="#" class="p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 text-center">
+                        <i class="fas fa-graduation-cap text-purple-500 text-2xl mb-2"></i>
+                        <p class="font-medium">LMS Portal</p>
+                    </a>
+                    
+                    <a href="#" class="p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 text-center">
+                        <i class="fas fa-book-reader text-orange-500 text-2xl mb-2"></i>
+                        <p class="font-medium">Library</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section id="resources" class="py-12 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-2">Learning Resources</h2>
+            <p class="text-gray-600 text-center mb-10">Free revision materials for all ICT subjects</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Programming -->
+                <div class="bg-gray-50 p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-code text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Programming</h3>
+                    </div>
+                    <ul class="space-y-3">
+                        <li><a href="https://www.w3schools.com" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> W3Schools - All Languages
+                        </a></li>
+                        <li><a href="https://www.freecodecamp.org" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> FreeCodeCamp
+                        </a></li>
+                        <li><a href="https://www.geeksforgeeks.org" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> GeeksforGeeks
+                        </a></li>
+                        <li><a href="https://www.javatpoint.com" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> JavaTpoint
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Networking -->
+                <div class="bg-gray-50 p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-network-wired text-green-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Networking</h3>
+                    </div>
+                    <ul class="space-y-3">
+                        <li><a href="https://www.netacad.com" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> Cisco NetAcad
+                        </a></li>
+                        <li><a href="https://www.packettracernetwork.com" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> Packet Tracer Labs
+                        </a></li>
+                        <li><a href="https://www.routeralley.com" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> Router Alley Guides
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <!-- Database -->
+                <div class="bg-gray-50 p-6 rounded-xl shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-database text-purple-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">Database</h3>
+                    </div>
+                    <ul class="space-y-3">
+                        <li><a href="https://www.sqlbolt.com" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> SQL Bolt Tutorial
+                        </a></li>
+                        <li><a href="https://www.mysqltutorial.org" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> MySQL Tutorial
+                        </a></li>
+                        <li><a href="https://www.postgresqltutorial.com" target="_blank" class="flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i> PostgreSQL Tutorial
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Additional Resources -->
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h4 class="font-bold mb-2">YouTube Channels</h4>
+                    <p class="text-sm text-gray-600">NetworkChuck, freeCodeCamp, Corey Schafer, Traversy Media</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h4 class="font-bold mb-2">Practice Platforms</h4>
+                    <p class="text-sm text-gray-600">LeetCode, HackerRank, Codecademy, Codewars</p>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <h4 class="font-bold mb-2">eBooks & PDFs</h4>
+                    <p class="text-sm text-gray-600">OpenStax, O'Reilly Free Books, GitHub Free Programming Books</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <h4 class="font-bold mb-2">Certifications</h4>
+                    <p class="text-sm text-gray-600">Google IT Support, Microsoft Learn, AWS Educate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Software Section -->
+    <section id="software" class="py-12 px-4 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-2">Essential Software</h2>
+            <p class="text-gray-600 text-center mb-10">Free & open-source tools for ICT students</p>
+            
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-download mr-2 text-blue-600"></i> Official Download Links (100% Legal)
+                </h3>
+                
+                <div class="software-grid mb-8">
+                    <!-- Development Tools -->
+                    <div class="text-center p-4 border rounded-lg hover:shadow-md">
+                        <i class="fas fa-code text-blue-500 text-3xl mb-3"></i>
+                        <h4 class="font-bold">VS Code</h4>
+                        <a href="https://code.visualstudio.com" target="_blank" class="text-sm text-blue-600 hover:underline">Download</a>
+                    </div>
+                    
+                    <div class="text-center p-4 border rounded-lg hover:shadow-md">
+                        <i class="fab fa-python text-green-500 text-3xl mb-3"></i>
+                        <h4 class="font-bold">Python</h4>
+                        <a href="https://www.python.org/downloads/" target="_blank" class="text-sm text-blue-600 hover:underline">Download</a>
+                    </div>
+                    
+                    <div class="text-center p-4 border rounded-lg hover:shadow-md">
+                        <i class="fab fa-git-alt text-orange-500 text-3xl mb-3"></i>
+                        <h4 class="font-bold">Git</h4>
+                        <a href="https://git-scm.com/downloads" target="_blank" class="text-sm text-blue-600 hover:underline">Download</a>
+                    </div>
+                    
+                    <div class="text-center p-4 border rounded-lg hover:shadow-md">
+                        <i class="fab fa-docker text-blue-400 text-3xl mb-3"></i>
+                        <h4 class="font-bold">Docker</h4>
+                        <a href="https://www.docker.com/products/docker-desktop/" target="_blank" class="text-sm text-blue-600 hover:underline">Download</a>
+                    </div>
+                    
+                    <!-- Networking -->
+                    <div class="text-center p-4 border rounded-lg hover:shadow-md">
+                        <i class="fas fa-wifi text-purple-500 text-3xl mb-3"></i>
+                        <h4 class="font-bold">Packet Tracer</h4>
+                        <a href="https://www.netacad.com/courses/packet-tracer" target="_blank" class="text-sm text-blue-600 hover:underline">Download</a>
+                    </div>
+                    
+                    <div class="text-center p-4 border rounded-lg hover:shadow-md">
+                        <i class="fas fa-shield-alt text-red-500 text-3xl mb-3"></i>
+                        <h4 class="font-bold">VirtualBox</h4>
+                        <a href="https://www.virtualbox.org" target="_blank" class="text-sm text-blue-600 hover:underline">Download</a>
+                    </div>
+                    
+                    <div class="text-center p-4 border rounded-lg hover:shadow-md">
+                        <i class="fas fa-terminal text-gray-600 text-3xl mb-3"></i>
+                        <h4 class="font-bold">Putty</h4>
+                        <a href="https://www.putty.org" target="_blank" class="text-sm text-blue-600 hover:underline">Download</a>
+                    </div>
+                    
+                    <div class="text-center p-4 border rounded-lg hover:shadow-md">
+                        <i class="fas fa-chart-network text-teal-500 text-3xl mb-3"></i>
+                        <h4 class="font-bold">Wireshark</h4>
+                        <a href="https://www.wireshark.org/download.html" target="_blank" class="text-sm text-blue-600 hover:underline">Download</a>
+                    </div>
+                </div>
+                
+                <!-- Student Discounts -->
+                <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                    <h4 class="font-bold text-xl mb-3 flex items-center">
+                        <i class="fas fa-graduation-cap text-blue-600 mr-2"></i> Student Freebies & Discounts
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <a href="https://education.github.com/pack" target="_blank" class="p-4 bg-white rounded-lg hover:shadow flex items-center">
+                            <i class="fab fa-github text-2xl mr-3"></i>
+                            <div>
+                                <p class="font-bold">GitHub Student</p>
+                                <p class="text-sm text-gray-600">Free developer tools</p>
+                            </div>
+                        </a>
+                        
+                        <a href="https://azure.microsoft.com/en-us/free/students/" target="_blank" class="p-4 bg-white rounded-lg hover:shadow flex items-center">
+                            <i class="fab fa-microsoft text-2xl mr-3 text-blue-500"></i>
+                            <div>
+                                <p class="font-bold">Azure for Students</p>
+                                <p class="text-sm text-gray-600">$100 credit + free services</p>
+                            </div>
+                        </a>
+                        
+                        <a href="https://www.jetbrains.com/student/" target="_blank" class="p-4 bg-white rounded-lg hover:shadow flex items-center">
+                            <i class="fas fa-jet-fighter-up text-2xl mr-3 text-purple-500"></i>
+                            <div>
+                                <p class="font-bold">JetBrains IDE</p>
+                                <p class="text-sm text-gray-600">Free professional IDEs</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- School Links Section -->
+    <section id="school" class="py-12 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-10">School Portal Integration</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Portal Quick Access -->
+                <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-8 rounded-2xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-university mr-3 text-blue-600"></i> Centralized Access
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-envelope text-red-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold">Email Portal</p>
+                                    <p class="text-sm text-gray-600">Outlook / Gmail for Schools</p>
+                                </div>
+                            </div>
+                            <a href="https://mail.google.com" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                Access
+                            </a>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-graduation-cap text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold">Learning System</p>
+                                    <p class="text-sm text-gray-600">Moodle / Canvas / Blackboard</p>
+                                </div>
+                            </div>
+                            <button onclick="alert('Replace with your actual LMS link')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                Access
+                            </button>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-file-invoice-dollar text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold">Fee Payment</p>
+                                    <p class="text-sm text-gray-600">Online payment portal</p>
+                                </div>
+                            </div>
+                            <button onclick="alert('Replace with actual fee portal link')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                Access
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom Portal Setup -->
+                <div class="bg-gray-50 p-8 rounded-2xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-cog mr-3 text-gray-700"></i> Customize Your Portal
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <p class="text-gray-700 mb-4">Add your school's specific links:</p>
+                        <div class="flex">
+                            <input type="text" id="newPortalLink" placeholder="Portal Name" class="flex-1 border border-gray-300 rounded-l-lg px-4 py-3">
+                            <input type="text" id="newPortalUrl" placeholder="https://" class="flex-1 border border-gray-300 border-l-0 px-4 py-3">
+                            <button onclick="addCustomLink()" class="bg-blue-600 text-white px-4 py-3 rounded-r-lg hover:bg-blue-700">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="customLinks" class="space-y-3">
+                        <!-- Custom links will appear here -->
+                        <div class="bg-white p-3 rounded-lg border flex justify-between items-center">
+                            <span>Library Catalog</span>
+                            <div>
+                                <button class="text-green-600 hover:text-green-800 mr-2">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">COMPUTER AND INFORMATICS</h3>
+                    </div>
+                    <p class="text-gray-400">Made by students, for students. Your all-in-one academic hub.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#dashboard" class="text-gray-400 hover:text-white">Dashboard</a></li>
+                        <li><a href="#resources" class="text-gray-400 hover:text-white">Resources</a></li>
+                        <li><a href="#software" class="text-gray-400 hover:text-white">Software</a></li>
+                        <li><a href="#school" class="text-gray-400 hover:text-white">School Links</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">All software links are official</li>
+                        <li class="text-gray-400">No piracy or cracked software</li>
+                        <li class="text-gray-400">Educational use only</li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Get in Touch</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-400">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-800">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-400">Report issues: support@computerandinformatics2026.dev</p>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2026 COMPUTER AND INFORMATICS . This is a student project. All trademarks belong to their respective owners.</p>
+                <p class="mt-2">Built with HTML, CSS, JavaScript • Hosted on GitHub Pages</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const quickLoginBtn = document.getElementById('quickLoginBtn');
+        const closeModal = document.getElementById('closeModal');
+        const loginModal = document.getElementById('loginModal');
+        const loginForm = document.getElementById('loginForm');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        // Toggle Mobile Menu
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Open Login Modal
+        loginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'block';
+        });
+        
+        quickLoginBtn.addEventListener('click', () => {
+            // Demo login
+            document.getElementById('studentId').value = 'demo@ictnexus.com';
+            document.getElementById('password').value = 'demo123';
+            loginModal.style.display = 'block';
+        });
+        
+        // Close Modal
+        closeModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+        });
+        
+        // Handle Login Form
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const studentId = document.getElementById('studentId').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation
+            if (studentId && password) {
+                // Demo login check
+                if (studentId === 'demo@ictnexus.com' && password === 'demo123') {
+                    alert('Login successful! Welcome to ICT Nexus.');
+                    loginModal.style.display = 'none';
+                    
+                    // Update UI for logged in user
+                    loginBtn.innerHTML = '<i class="fas fa-user mr-2"></i>Welcome, Demo Student';
+                    loginBtn.classList.remove('bg-blue-600');
+                    loginBtn.classList.add('bg-green-600');
+                    
+                    // Show welcome notification
+                    showNotification('Welcome back, Demo Student!');
+                } else {
+                    alert('Invalid credentials. Use demo@ictnexus.com / demo123 for demo access.');
+                }
+            }
+        });
+        
+        // Dark Mode Toggle
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = darkModeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun text-yellow-400';
+                showNotification('Dark mode enabled');
+            } else {
+                icon.className = 'fas fa-moon text-gray-700';
+                showNotification('Light mode enabled');
+            }
+        });
+        
+       
